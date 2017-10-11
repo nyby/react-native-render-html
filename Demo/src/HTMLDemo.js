@@ -11,6 +11,7 @@ const DEFAULT_PROPS = {
     htmlStyles: CUSTOM_STYLES,
     renderers: CUSTOM_RENDERERS,
     imagesMaxWidth: IMAGES_MAX_WIDTH,
+    firstLetterStyle: { fontSize: 22, fontWeight: '700' },
     onLinkPress: (evt, href) => { Linking.openURL(href); }
 };
 

@@ -117,3 +117,9 @@ export function textwrapper (htmlAttribs, children, convertedCSSStyles) {
         <Text style={convertedCSSStyles}>{ children }</Text>
     );
 }
+
+export function firstletter (htmlAttribs, children, convertedCSSStyles, passProps) {
+    return (
+        <Text style={passProps.firstLetterStyle}>{ passProps.data }</Text>
+    );
+}

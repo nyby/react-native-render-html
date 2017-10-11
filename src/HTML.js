@@ -19,6 +19,7 @@ export default class HTML extends PureComponent {
         uri: PropTypes.string,
         tagsStyles: PropTypes.object,
         classesStyles: PropTypes.object,
+        firstLetterStyle: PropTypes.object,
         containerStyle: ViewPropTypes ? ViewPropTypes.style : View.propTypes.style,
         customWrapper: PropTypes.func,
         onLinkPress: PropTypes.func,
@@ -98,6 +99,33 @@ export default class HTML extends PureComponent {
 
     registerIgnoredTags (props = this.props) {
         this._ignoredTags = props.ignoredTags.map((tag) => tag.toLowerCase());
+    }
+
+    applyFirstLetterStyle (RNElements) {
+        for (let i = 0; i < RNElements.length; i++) {
+            const Element = RNElements[i];
+            let { data, children, attribs, parent } = Element;
+            if (data) {
+                const firstLetter = data.substring(0, 1);
+                if (firstLetter.match(/[a-z]/i)) {
+                    // console.info('FIRST LETTER', data.substring(0, 1));
+                    RNElements.splice(
+                        i,
+                        0,
+                        { wrapper: 'Text', data: data.substring(0, 1), attribs, parent, tagName: 'firstletter' }
+                    );
+                    RNElements[i + 1].data = data.substring(1);
+                    return { found: true, RNElements };
+                }
+            }
+            if (children) {
+                const firstLetterFoundInChildren = this.applyFirstLetterStyle(children);
+                if (firstLetterFoundInChildren.found) {
+                    return { found: true, RNElements };
+                }
+            }
+        }
+        return { found: false, RNElements };
     }
 
     /**
@@ -252,7 +280,7 @@ export default class HTML extends PureComponent {
      * @memberof HTML
      */
     renderRNElements (RNElements, parentWrapper = 'root', parentIndex = 0) {
-        const { tagsStyles, classesStyles, onLinkPress, imagesMaxWidth, emSize, ignoredStyles, baseFontSize } = this.props;
+        const { tagsStyles, classesStyles, onLinkPress, imagesMaxWidth, emSize, ignoredStyles, baseFontSize, firstLetterStyle } = this.props;
         return RNElements && RNElements.length ? RNElements.map((element, index) => {
             const { attribs, data, tagName, parentTag, children, nodeIndex, wrapper } = element;
             const Wrapper = wrapper === 'Text' ? Text : View;
@@ -287,6 +315,8 @@ export default class HTML extends PureComponent {
                         emSize,
                         baseFontSize,
                         key,
+                        firstLetterStyle,
+                        data,
                         rawChildren: children
                     });
             }
@@ -312,7 +342,7 @@ export default class HTML extends PureComponent {
     }
 
     render () {
-        const { decodeEntities, customWrapper } = this.props;
+        const { decodeEntities, customWrapper, firstLetterStyle } = this.props;
         const { dom } = this.state;
         if (!dom) {
             return false;
@@ -320,9 +350,12 @@ export default class HTML extends PureComponent {
         let RNNodes;
         const parser = new htmlparser2.Parser(
             new htmlparser2.DomHandler((_err, dom) => {
-                // console.log('DOMNodes', dom);
-                // console.log('Parsed nodes', this.mapDOMNodesTORNElements(dom));
-                const RNElements = this.mapDOMNodesTORNElements(dom);
+                console.log('DOMNodes', dom);
+                console.log('Parsed nodes', this.mapDOMNodesTORNElements(dom));
+                let RNElements = this.mapDOMNodesTORNElements(dom);
+                if (firstLetterStyle) {
+                    RNElements = this.applyFirstLetterStyle(RNElements).RNElements;
+                }
                 RNNodes = this.renderRNElements(RNElements);
             }),
             { decodeEntities: decodeEntities }
