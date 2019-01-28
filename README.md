@@ -324,4 +324,4 @@ import { functionName } from 'react-native-render-html/src/HTMLUtils';
 * `getClosestNodeParentByTag(node, tag)`
     * Description: Returns the closest parent of a node with a specific tag.
     * Parameters : - `node` : a parsed HTML node from `alterChildren` for example
-    * Returns : An HTML node if found.
+    * Returns : An HTML node if found
