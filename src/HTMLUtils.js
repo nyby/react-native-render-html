@@ -1,4 +1,4 @@
-import TextStylesPropTypes from 'react-native/Libraries/Text/TextStylePropTypes';
+import TextStylesPropTypes from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedTextStylePropTypes';
 import DeprecatedViewStylePropTypes from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedViewStylePropTypes';
 import DeprecatedImageStylesPropTypes from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedImageStylePropTypes';
 
